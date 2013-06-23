@@ -1,0 +1,68 @@
+/*Oncioiu Raluca
+**Grupa: 323CA
+**Tema3
+*/
+
+	
+	**Citirea datelor si retinerea lor
+	
+	Pentru a citi imaginea, am folosit o matrice pentru a retine valorile
+pixelilor. Apoi, am calculat graful imaginii, tinand cont ca:
+
+- fiecare pixel are patru vecini (N, S, E, W) mai putin pixelii de pe frontiera
+matricei
+
+- pentru fiecare pixel (considerat nod) se retine culoarea, indexul, calculat cu
+formula n * i + j si un vector de structuri de tipul {index_vecin, culoare_vecin,
+cost_muchie_vecin}
+
+- am legat doua noduri i, j oarecare prin muchii duble
+
+- am adaugat un nod sursa, avand drept copii toti pixelii din graf si un nod
+drena, avand niciun copil; in schimb, toate nodurile, mai putin nodul sursa 
+contine drept copil pe nodul drena
+
+- schema grafului este: nod_sursa --> noduri <--> noduri --> nod_drena
+
+
+	**Calcularea costurilor din graf
+	
+	Am calculat media si abaterea pentru foreground si background dupa formulele 
+din enunt. Lambda si valoare pentru treshold le-am luat din fisierul 
+parametri.txt.
+	
+	Costul de la nodul sursa la un nod oarecare este egal cu f(1), iar costul de 
+la un nod oarecare la nodul drena este egal cu f(0), unde f este formula (11)
+din enunt. Costul dintre oricare doua noduri i, j este lambda.
+
+
+	**Flux maxim
+
+	Am calculat fluxul maxim prin graf, pornind de la sursa, la drena.
+	Pentru a optimiza sursa, am calculat minimul dintre muchia (sursa, nod) si 
+muchia (nod, drena) si l-am adaugat la fluxul total. Astfel, am redus cautarea
+drumurilor semnificativ (se ruleaza bfs-ul de n * m ori mai putin). 
+	Drumurile de tip sursa-nod-drena, le-am saturat din start. Celelalte drumuri
+se satureaza si ele dupa aplicarea bfs-urilor.
+
+
+	**Taietura minima
+
+	Dupa calcularea fluxului maxim, am facut o taietura minima prin graf, din care
+au rezultat doua multimi de noduri: source_set si sink_set.
+	Multimile, nu le-am retinut efectiv, pentru a nu ocupa memorie degeaba. Am
+retinut intr-un vector de bool-uri numit "in_queue" nodurile care au fost atinse 
+de bfs. Acestea sunt nodurile din foreground. 
+	Am afisat direct valoarea 0 sau 255 daca nodul era sau nu in vectorul in_queue.
+	
+	**Observatii
+	Am folosit scheletul din laboratorul 10, de fluxuri, pentru a aplica functia
+min_cut si max_flow, pentru a obtine taietura minima a pixelilor foreground si
+background. 
+	Am considerat ca pixelii foreground sunt 0, iar cei background sunt 255.
+	
+	**Complexitate
+	Avem O(n * m) pentru Edmonds Karp la calcularea fluxului maxim, O(V + E) la bfs.
+	
+	
+	
